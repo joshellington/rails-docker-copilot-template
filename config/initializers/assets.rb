@@ -10,3 +10,16 @@ Rails.application.config.assets.version = "1.0"
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
+
+# Support asset-url in scss files
+class AssetUrlProcessor
+  def self.call(input)
+    context = input[:environment].context_class.new(input)
+    data = input[:data].gsub(/asset\-url\(["']?(.+?)["']?\)/) do |_match|
+      "url(#{context.asset_path($1)})"
+    end
+    {data: data}
+  end
+end
+
+Sprockets.register_postprocessor "text/css", AssetUrlProcessor

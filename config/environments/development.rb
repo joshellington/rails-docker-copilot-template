@@ -56,6 +56,15 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
+  # Compile assets on the fly
+  config.assets.compile = true
+
+  # Clear hosts blocking when running locally
+  config.hosts.clear
+
+  # Check if we use Docker to allow docker ip through web-console
+  config.web_console.whiny_requests = false
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
@@ -64,4 +73,11 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.rails_logger = true
+    Bullet.console = true
+  end
 end
