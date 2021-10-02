@@ -1,24 +1,66 @@
-# README
+# Rails App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Welcome to your [Ruby On Rails](https://rubyonrails.org/) 7.0.0alpha2 app.
 
-Things you may want to cover:
+## Setup & Running Locally
 
-* Ruby version
+Clone down the repo, install [Docker](https://hub.docker.com/editions/community/docker-ce-desktop-mac/) & run:
 
-* System dependencies
+```bash
+$ ./bin/docker/setup
+$ ./bin/docker/start
+```
 
-* Configuration
+This will build the docker image, then setup the `bin/setup` file which will run `bundle` & create the database.
 
-* Database creation
+Then navigate your browser to http://localhost:3000/ to see your site.
 
-* Database initialization
+### Running one of commands
 
-* How to run the test suite
+To run a one off command, run it within the web service, e.g:
 
-* Services (job queues, cache servers, search engines, etc.)
+```bash
+$ ./bin/docker/bundle exec rails db:migrate
+$ ./bin/docker/bundle
+$ ./bin/docker/rails
+$ ./bin/docker/yarn
+```
 
-* Deployment instructions
+### Restoring a database
 
-* ...
+If you have an existing database dump in a file called `latest.dump`, you can restore it by turning on just the postgres service in one terminal tab, and running `pg_restore` in a secondary tab:
+
+```bash
+$ docker compose up postgres
+$ pg_restore --verbose --clean --no-acl --no-owner -j 2 -h localhost -d DATABASE_NAME --username postgres latest.dump
+```
+
+<!-- ## Tests
+
+You can run RSpec locally by running:
+
+```bash
+$ docker compose -f docker-compose.ci.yml run --rm test
+```
+
+The template comes preconfigured with [RSpec](https://rspec.info/) for tests, and comes with a [GitHub Action](https://github.com/Ruby-Starter-Kits/Docker-Rails-Template/blob/master/.github/workflows/tests.yml) to run them when you push to GitHub. -->
+
+## Linting
+
+This app uses [Standard](https://github.com/testdouble/standard) for Ruby and includes a [GitHub Action](https://github.com/joshellington/rails-docker-copilot-template/blob/master/.github/workflows/standard.yml) to check future commits are up to standard.
+
+## Usage
+
+Feel free to use these as a starting point for your own Ruby on Rails project!
+
+## Resources
+
+* [Ruby on Rails Guides](https://guides.rubyonrails.org/)
+* [Ruby on Rails API Documentation](https://api.rubyonrails.org/)
+* [Docker-Rails-Generator](https://github.com/Ruby-Starter-Kits/Docker-Rails-Generator)
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
+
+Copyright (c) 2021-present, [Josh Ellington](https://joshellington.com/)
