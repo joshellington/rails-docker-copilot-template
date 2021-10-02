@@ -1,0 +1,17 @@
+{
+  "name": "app",
+  "private": "true",
+  "scripts": {
+    "build:css": "sass ./app/assets/stylesheets/application.scss ./app/assets/builds/application.css --no-source-map --style=compressed --load-path=node_modules",
+    "build": "node ./esbuild.js",
+    "dev": "concurrently \"yarn build:css --watch --source-map --style=expanded\" \"yarn build --watch\""
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "^3.0.0",
+    "@hotwired/turbo-rails": "^7.0.1",
+    "esbuild": "^0.13.3",
+    "sass": "^1.42.1",
+    "concurrently": "^6.3",
+    "lodash": "^4.17"
+  }
+}

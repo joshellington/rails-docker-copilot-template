@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+echo "== Killing Docker things =="
+docker compose down --remove-orphans -v

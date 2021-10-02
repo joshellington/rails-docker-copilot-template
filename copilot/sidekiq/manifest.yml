@@ -1,0 +1,37 @@
+# The manifest for the "sidekiq" service.
+# Read the full specification for the "Backend Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/backend-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: sidekiq
+type: Backend Service
+
+# Your service is reachable at "http://sidekiq.${COPILOT_SERVICE_DISCOVERY_ENDPOINT}:3000" but is not public.
+
+# Configuration for your containers and service.
+image:
+  # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/backend-service/#image-build
+  build:
+    context: .
+    dockerfile: Dockerfile
+    target: production
+  # Port exposed through your container to route traffic to it.
+  port: 3000
+
+
+cpu: 256       # Number of CPU units for the task.
+memory: 512    # Amount of memory in MiB used by the task.
+count: 1       # Number of tasks that should be running in your service.
+exec: true     # Enable running commands in your container.
+command: ["./bin/bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml", "-e", "production"]
+
+environments:
+  test:
+    secrets:
+      RDS_HOSTNAME: /copilot/example-app/test/secrets/RDS_HOSTNAME
+      RDS_USERNAME: /copilot/example-app/test/secrets/RDS_USERNAME
+      RDS_PASSWORD: /copilot/example-app/test/secrets/RDS_PASSWORD
+      RDS_PORT: /copilot/example-app/test/secrets/RDS_PORT
+      RAILS_MASTER_KEY: /copilot/example-app/test/secrets/RAILS_MASTER_KEY
+      REDIS_URL: /copilot/example-app/test/secrets/REDIS_URL
+      SENDGRID_API_KEY: /copilot/example-app/test/secrets/SENDGRID_API_KEY

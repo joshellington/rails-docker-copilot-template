@@ -1,0 +1,68 @@
+version: "3"
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile
+    target: development
+  tmpfs:
+    - /tmp
+  environment:
+    REDIS_URL: redis://@redis:6379/1
+    DATABASE_URL: postgres://postgres:postgres@postgres:5432/
+  volumes:
+    - .:/usr/src/app:cached
+    - bundler:/usr/local/bundle:delegated
+    - bootsnap_cache:/usr/src/bootsnap:delegated
+    - rails_cache:/usr/src/app/tmp/cache:delegated
+    - node_modules:/usr/src/app/node_modules:delegated
+    - yarn_cache:/usr/src/yarn:delegated
+    - letter_opener:/usr/src/app/tmp/letter_opener:delegated
+  depends_on:
+    - postgres
+    - redis
+
+services:
+  postgres:
+    image: postgres:13.3
+    volumes:
+      - postgresql:/var/lib/postgresql/data:delegated
+    ports:
+      - "2345:5432"
+    environment:
+      PSQL_HISTFILE: /root/log/.psql_history
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: on-failure
+    logging:
+      driver: none
+
+  redis:
+    image: redis:6.2
+    volumes:
+      - redis:/data:delegated
+    ports:
+      - "9736:6379"
+    restart: on-failure
+    logging:
+      driver: none
+
+  web:
+    <<: *app
+    command: bash -c "./bin/docker/prepare-to-start-rails && yarn dev & ./bin/rails server -p 3000 -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+
+  worker:
+    <<: *app
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+volumes:
+  postgresql:
+  redis:
+  bundler:
+  bootsnap_cache:
+  rails_cache:
+  node_modules:
+  yarn_cache:
+  letter_opener:
